@@ -11,6 +11,8 @@ contract TestGetStableGivenRisky is Base {
     using Units for int128;
     using Units for uint256;
 
+    int128 public constant zero = int128(0);
+
     /// 0. Scale strike to respective decimals
     /// 1. Calculate { sigma * sqrt( tau ) }
     /// 2. Scale reserveRisky to respective decimals
@@ -19,11 +21,12 @@ contract TestGetStableGivenRisky is Base {
     /// 5. Calculate { Step 0. * getCDF( Step 4. ) + Invariant }
 
     /// @notice Fuzz scaling of strike to its respective decimal places
-    function testStep0(uint128 strike, uint scaleFactorStable) public {
-        if(scaleFactorStable > WAD) return;
-        int128 K = strike.scaleToX64(scaleFactorStable);
-        uint256 X = K.scaleFromX64(scaleFactorStable);
-        assertEq(strike, X);
+    function testStep0(uint128 strike, uint scaleFactorStable) public returns (int128) {
+        if(scaleFactorStable > WAD) return zero;
+        int128 K = uint(strike).scaleToX64(scaleFactorStable);
+        uint256 X = K.scalefromX64(scaleFactorStable);
+        assertEq(strike, uint128(X));
+        return K;
     }
 
     /// @notice Prove scaling of strike to its respective decimal places
@@ -32,17 +35,17 @@ contract TestGetStableGivenRisky is Base {
     }
 
     /// @notice Fuzz { sigma * sqrt( tau ) }
-    function testStep1(uint64 sigma, uint32 tau) public {
-        if(sigma > RAY) return;
-        ReplicationMath.getProportionalVolatility(sigma, tau);
+    function testStep1(uint64 sigma, uint32 tau) public returns (int128) {
+        if(sigma > RAY) return zero;
+        return ReplicationMath.getProportionalVolatility(sigma, tau);
     }
 
     /// @notice Fuzz scaling of reserveRisky to its respective decimals
     function testStep2(uint128 reserveRisky, uint scaleFactorRisky) public {
         if(scaleFactorRisky > WAD) return;
-        int128 reserve = reserveRisky.scaleToX64(scaleFactorRisky);
-        uint256 scaled = reserve.scaleFromX64(scaleFactorRisky);
-        assertEq(reserve, scaled);
+        int128 reserve = uint(reserveRisky).scaleToX64(scaleFactorRisky);
+        uint256 scaled = reserve.scalefromX64(scaleFactorRisky);
+        assertEq(reserveRisky, uint128(scaled));
     }
 
     /// @notice Prove scaling of reserveRisky to its respective decimal places
@@ -51,9 +54,9 @@ contract TestGetStableGivenRisky is Base {
     }
 
     /// @notice Fuzz { getInverseCDF( 1 - reserveRiskyScaled ) }
-    function testStep3(int128 reserveRiskyScaled) public {
-        if(reserveRiskyScaled > ReplicationMath.ONE_INT) return;
-        ReplicationMath.ONE_INT.sub(reserveRiskyScaled).getInverseCDF();
+    function testStep3(int128 reserveRiskyScaled) public returns (int128) {
+        if(reserveRiskyScaled > ReplicationMath.ONE_INT) return zero;
+        return ReplicationMath.ONE_INT.sub(reserveRiskyScaled).getInverseCDF();
     }
 
     /// @notice Fuzz { Step 3. + Step 1. }
@@ -61,8 +64,8 @@ contract TestGetStableGivenRisky is Base {
         int128 reserve,
         uint64 sigma,
         uint32 tau
-    ) public {
-        testStep3(reserve).add(testStep1(sigma, tau));
+    ) public returns (int128) {
+        return testStep3(reserve).add(testStep1(sigma, tau));
     }
 
     /// @notice Fuzz { Step 0. * getCDF( Step 4. ) + Invariant }
@@ -72,7 +75,7 @@ contract TestGetStableGivenRisky is Base {
         int128 reserve,
         uint64 sigma,
         uint32 tau,
-        int128 invariantLast,
+        int128 invariantLast
     ) public {
         testStep0(strike, scaleFactorStable).mul(testStep4(reserve, sigma, tau).getCDF()).add(invariantLast);
     }
@@ -86,10 +89,10 @@ contract TestGetStableGivenRisky is Base {
         uint128 strike,
         uint64 sigma,
         uint32 tau
-    ) public {
-        if(sigma > RAY) return;
-        if(scaleFactorRisky > WAD || scaleFactorStable > WAD) return;
-        ReplicationMath.GetStableGivenRisky(invariantLast, scaleFactorRisky, scaleFactorStable, reserveRisky, strike, sigma, tau);
+    ) public returns(uint) {
+        if(sigma > RAY) return 0;
+        if(scaleFactorRisky > WAD || scaleFactorStable > WAD) return 0;
+        return ReplicationMath.getStableGivenRisky(invariantLast, scaleFactorRisky, scaleFactorStable, reserveRisky, strike, sigma, tau);
     }
 
     /// @notice Prove getStableGivenRisky

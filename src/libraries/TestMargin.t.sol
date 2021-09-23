@@ -29,7 +29,7 @@ contract TestMargin is Base {
         margins[msg.sender] = margins.withdraw(delRisky, delStable);
         assertTrue(preX - delRisky >= margins[msg.sender].balanceRisky, "Risky did not decrease");
         assertTrue(preY - delStable >= margins[msg.sender].balanceStable, "Stable did not decrease");
-        assertEq(margins[msg.sender].balanceRisky == 0, "Risky not zero");
-        assertEq(margins[msg.sender].balanceStable == 0, "Stable not zero");
+        assertEq(margins[msg.sender].balanceRisky, 0);
+        assertEq(margins[msg.sender].balanceStable, 0);
     }
 }

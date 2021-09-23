@@ -27,15 +27,10 @@ contract TestReserve is Base {
         });
     }
 
-    /// @notice Used for testing
-    function res() public view returns (Reserve.Data storage) {
-        return reserves[resId];
-    }
-
     /// @notice Fuzz update
     function testUpdate(uint128 reserveRisky, uint128 reserveStable, uint128 liquidity, uint32 blockTimestamp) public {
         setReserves(reserveRisky, reserveStable, liquidity);
-        res().update(blockTimestamp);
+        reserves[resId].update(blockTimestamp);
     }
 
     /// @notice Prove update
@@ -58,7 +53,7 @@ contract TestReserve is Base {
             if(deltaOut > reserveRisky) return;
         }
 
-        res().swap(addXRemoveY, deltaIn, deltaOut, blockTimestamp);
+        reserves[resId].swap(addXRemoveY, deltaIn, deltaOut, blockTimestamp);
     }
 
     /// @notice Fuzz allocate
@@ -69,7 +64,7 @@ contract TestReserve is Base {
         uint32 blockTimestamp
     ) public {
         setReserves(reserveRisky, reserveStable, liquidity);
-        res().allocate(delRisky, delStable, delLiquidity, blockTimestamp);
+        reserves[resId].allocate(delRisky, delStable, delLiquidity, blockTimestamp);
     }
 
     /// @notice Fuzz remove
@@ -83,7 +78,7 @@ contract TestReserve is Base {
         if(delRisky > reserveRisky) return;
         if(delStable > reserveStable) return;
         if(delLiquidity > liquidity) return;
-        res().remove(delRisky, delStable, delLiquidity, blockTimestamp);
+        reserves[resId].remove(delRisky, delStable, delLiquidity, blockTimestamp);
     }
 
     /// @notice Fuzz getAmounts
@@ -92,6 +87,6 @@ contract TestReserve is Base {
     ) public {
         setReserves(reserveRisky, reserveStable, liquidity);
         if(delLiquidity > liquidity) return;
-        res().getAmounts(delLiquidity);
+        reserves[resId].getAmounts(delLiquidity);
     }
 }

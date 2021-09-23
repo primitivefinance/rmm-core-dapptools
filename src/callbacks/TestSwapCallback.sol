@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.6;
 
-import "@primitivefinance/v2-core/contracts/IPrimitiveEngine.sol";
-import "@primitivefinance/v2-core/contracts/IERC20.sol";
+import "@primitivefinance/v2-core/contracts/interfaces/IPrimitiveEngine.sol";
+import "@primitivefinance/v2-core/contracts/interfaces/IERC20.sol";
 import "./Scenarios.sol";
 
 abstract contract TestSwapCallback is Scenarios {

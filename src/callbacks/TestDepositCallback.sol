@@ -7,8 +7,8 @@ import "./Scenarios.sol";
 
 abstract contract TestDepositCallback is Scenarios {
     function depositCallback(
-        uint256 dRisky,
-        uint256 dStable,
+        uint256 delRisky,
+        uint256 delStable,
         bytes calldata data
     ) public {
         data;
@@ -17,14 +17,14 @@ abstract contract TestDepositCallback is Scenarios {
         address token1 = stable();
         address from = getCaller();
         if (scenario == Scenario.RISKY_ONLY) {
-            IERC20(token0).transferFrom(from, msg.sender, dRisky);
+            IERC20(token0).transferFrom(from, msg.sender, delRisky);
         } else if (scenario == Scenario.STABLE_ONLY) {
-            IERC20(token1).transferFrom(from, msg.sender, dStable);
+            IERC20(token1).transferFrom(from, msg.sender, delStable);
         } else if (scenario == Scenario.SUCCESS) {
-            IERC20(token0).transferFrom(from, msg.sender, dRisky);
-            IERC20(token1).transferFrom(from, msg.sender, dStable);
+            IERC20(token0).transferFrom(from, msg.sender, delRisky);
+            IERC20(token1).transferFrom(from, msg.sender, delStable);
         } else if (scenario == Scenario.REENTRANCY) {
-            IPrimitiveEngine(msg.sender).deposit(address(this), dRisky, dStable, data);
+            IPrimitiveEngine(msg.sender).deposit(address(this), delRisky, delStable, data);
         }
     }
 }

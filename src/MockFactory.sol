@@ -2,7 +2,7 @@
 pragma solidity 0.8.6;
 
 import "@primitivefinance/v2-core/contracts/interfaces/IPrimitiveFactory.sol";
-import "../engine/MockEngine.sol";
+import "./MockEngine.sol";
 
 contract MockFactory is IPrimitiveFactory {
     error SameTokenError();
