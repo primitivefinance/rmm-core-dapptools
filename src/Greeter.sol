@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@primitivefinance/v2-core/contracts/libraries/ReplicationMath.sol";
 
 library Errors {
     string constant InvalidBlockNumber = "invalid block number, please wait";

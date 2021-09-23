@@ -1,12 +1,15 @@
 {
-  "name": "dapptools-template",
-  "author": "Georgios Konstantopoulos",
-  "license": "Unlicense",
+  "name": "@primitivefinance/v2-core-dapptools",
+  "author": "Primitive",
+  "license": "GPL-3.0-or-later",
   "version": "1.0.0",
-  "description": "A template for building dapptools projects",
+  "description": "V2 Protocol testing using dapptools framework",
   "files": [
     "*.sol"
   ],
+  "dependencies": {
+    "@primitivefinance/v2-core": "^1.6.0"
+  },
   "devDependencies": {
     "copyfiles": "^2.4.1",
     "prettier": "^2.3.1",
@@ -19,5 +22,8 @@
     "prepack": "yarn prepublishOnly",
     "postpack": "yarn postpublish",
     "lint": "prettier --write src/**/*.sol"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }

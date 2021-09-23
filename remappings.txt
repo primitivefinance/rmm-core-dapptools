@@ -1,2 +1,3 @@
 @openzeppelin/=lib/openzeppelin-contracts/
 ds-test/=lib/ds-test/src/
+@primitivefinance/v2-core/=node_modules/@primitivefinance/v2-core/

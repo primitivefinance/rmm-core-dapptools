@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.6;
 
 import "./utils/GreeterTest.sol";
 import { Errors } from "../Greeter.sol";
