@@ -18,6 +18,7 @@ solc:; nix-env -f https://github.com/dapphub/dapptools/archive/master.tar.gz -iA
 # Build & test
 build  :; dapp build
 test   :; dapp test # --ffi # enable if you need the `ffi` cheat code on HEVM
+testCDF   :; dapp test --match '(Cumulative)' # --ffi # enable if you need the `ffi` cheat code on HEVM
 clean  :; dapp clean
 lint   :; yarn run lint
 estimate :; ./scripts/estimate-gas.sh ${contract}

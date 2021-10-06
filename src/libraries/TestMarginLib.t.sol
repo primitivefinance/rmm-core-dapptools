@@ -5,7 +5,7 @@ import "@primitivefinance/v2-core/contracts/libraries/Margin.sol";
 import "../utils/Base.sol";
 
 /// @title   deposit(), withdraw()
-contract TestMargin is Base {
+contract TestMarginLib is Base {
     using Margin for Margin.Data;
     using Margin for mapping(address => Margin.Data);
 

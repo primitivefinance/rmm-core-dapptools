@@ -5,7 +5,7 @@ import "@primitivefinance/v2-core/contracts/libraries/Reserve.sol";
 import "../utils/Base.sol";
 
 /// @title update(), allocate(), remove(), swap(), getAmounts()
-contract TestReserve is Base {
+contract TestReserveLib is Base {
     using Reserve for Reserve.Data;
     using Reserve for mapping(bytes32 => Reserve.Data);
 
@@ -15,11 +15,11 @@ contract TestReserve is Base {
     mapping(bytes32 => Reserve.Data) public reserves;
 
     /// @notice Initializes reserves with `resId` for use in each test
-    function setReserves(uint reserveRisky, uint reserveStable, uint liquidity) public {
+    function setReserves(uint128 reserveRisky, uint128 reserveStable, uint128 liquidity) public {
         reserves[resId] = Reserve.Data({
-            reserveRisky: uint128(reserveRisky), // risky token balance
-            reserveStable: uint128(reserveStable), // stable token balance
-            liquidity: uint128(liquidity),
+            reserveRisky: (reserveRisky), // risky token balance
+            reserveStable: (reserveStable), // stable token balance
+            liquidity: (liquidity),
             blockTimestamp: 1,
             cumulativeRisky: 0,
             cumulativeStable: 0,
@@ -29,13 +29,10 @@ contract TestReserve is Base {
 
     /// @notice Fuzz update
     function testUpdate(uint128 reserveRisky, uint128 reserveStable, uint128 liquidity, uint32 blockTimestamp) public {
+        if(blockTimestamp == 0) return;
+        if(liquidity == 0) return;
         setReserves(reserveRisky, reserveStable, liquidity);
         reserves[resId].update(blockTimestamp);
-    }
-
-    /// @notice Prove update
-    function proveUpdate(uint128 reserveRisky, uint128 reserveStable, uint128 liquidity, uint32 blockTimestamp) public {
-        testUpdate(reserveRisky, reserveStable, liquidity, blockTimestamp);
     }
 
     /// @notice Fuzz swap
@@ -45,13 +42,18 @@ contract TestReserve is Base {
         uint128 deltaOut,
         uint32 blockTimestamp
     ) public {
+        if(blockTimestamp == 0) return;
+        if(liquidity == 0) return;
         setReserves(reserveRisky, reserveStable, liquidity);
 
         if(addXRemoveY) {
             if(deltaOut > reserveStable) return;
+            if(uint(reserveRisky) + uint(deltaIn) > type(uint128).max) return;
         } else {
             if(deltaOut > reserveRisky) return;
+            if(uint(reserveStable) + uint(deltaIn) > type(uint128).max) return;
         }
+
 
         reserves[resId].swap(addXRemoveY, deltaIn, deltaOut, blockTimestamp);
     }
@@ -63,7 +65,12 @@ contract TestReserve is Base {
         uint128 delLiquidity,
         uint32 blockTimestamp
     ) public {
+        if(blockTimestamp == 0) return;
+        if(liquidity == 0) return;
         setReserves(reserveRisky, reserveStable, liquidity);
+        if(uint(reserveRisky) + uint(delRisky) > type(uint128).max) return;
+        if(uint(reserveStable) + uint(delStable) > type(uint128).max) return;
+        if(uint(liquidity) + uint(delLiquidity) > type(uint128).max) return;
         reserves[resId].allocate(delRisky, delStable, delLiquidity, blockTimestamp);
     }
 
@@ -74,6 +81,8 @@ contract TestReserve is Base {
         uint128 delLiquidity,
         uint32 blockTimestamp
     ) public {
+        if(blockTimestamp == 0) return;
+        if(liquidity == 0) return;
         setReserves(reserveRisky, reserveStable, liquidity);
         if(delRisky > reserveRisky) return;
         if(delStable > reserveStable) return;
@@ -85,6 +94,7 @@ contract TestReserve is Base {
     function testGetAmounts(uint128 reserveRisky, uint128 reserveStable, uint128 liquidity,
         uint128 delLiquidity
     ) public {
+        if(liquidity == 0) return;
         setReserves(reserveRisky, reserveStable, liquidity);
         if(delLiquidity > liquidity) return;
         reserves[resId].getAmounts(delLiquidity);

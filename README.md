@@ -4,6 +4,15 @@
 
 ![Github Actions](https://github.com/gakonst/dapptools-template/workflows/Tests/badge.svg)
 
+## 
+
+```
+login to user
+. "$HOME/.nix-profile/etc/profile.d/nix.sh"
+make test
+make testCDF
+```
+
 ## Building and testing
 
 ```sh
